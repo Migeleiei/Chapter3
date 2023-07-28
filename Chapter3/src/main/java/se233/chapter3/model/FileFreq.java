@@ -4,6 +4,11 @@ public class FileFreq {
     private String name;
     private String path;
     private Integer freq;
+
+    public String getPath() {
+        return path;
+    }
+
     public FileFreq(String name, String path, Integer freq) {
         this.name = name;
         this.path = path;
