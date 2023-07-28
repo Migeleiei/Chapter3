@@ -9,5 +9,8 @@
         <module name="Chapter3" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="se233" target="20" />
+    </bytecodeTargetLevel>
   </component>
 </project>
