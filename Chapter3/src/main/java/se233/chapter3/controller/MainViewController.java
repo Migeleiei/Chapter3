@@ -34,6 +34,8 @@ public class MainViewController {
     @FXML
     private ListView listView;
 
+    ArrayList<String> filePaths = new ArrayList<>();
+
     @FXML
     public void initialize() {
 
@@ -57,7 +59,10 @@ public class MainViewController {
                 for (int i = 0; i < total_files; i++) {
                     File file = db.getFiles().get(i);
                     filePath = file.getAbsolutePath();
-                    inputListView.getItems().addAll(filePath);
+                    String fileName =  file.getName();
+                    filePaths.add(filePath);
+//                    inputListView.getItems().addAll(filePath);
+                    inputListView.getItems().addAll(fileName);
                 }
             }
             dragEvent.setDropCompleted(success);
@@ -80,7 +85,8 @@ public class MainViewController {
                     Map<String, FileFreq>[] wordMap = new Map[total_files];
                     for (int i = 0; i < total_files; i++) {
                         try {
-                            String filePath = inputListViewItems.get(i);
+//                            String filePath = inputListViewItems.get(i);
+                            String filePath = filePaths.get(i);
                             PDFdocument p = new PDFdocument(filePath);
                             completionService.submit(new WordMapPageTask(p));
                         } catch (IOException e) {
