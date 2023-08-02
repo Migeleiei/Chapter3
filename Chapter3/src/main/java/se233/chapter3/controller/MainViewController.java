@@ -1,16 +1,18 @@
 package se233.chapter3.controller;
 
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
+import javafx.stage.Stage;
 import se233.chapter3.Launcher;
 import se233.chapter3.model.FileFreq;
 import se233.chapter3.model.PDFdocument;
@@ -33,8 +35,10 @@ public class MainViewController {
     private Button startButton;
     @FXML
     private ListView listView;
-
+    @FXML
+    private MenuItem closeButton;
     ArrayList<String> filePaths = new ArrayList<>();
+    private Button cancelButton = new Button("Cancel");
 
     @FXML
     public void initialize() {
@@ -59,7 +63,7 @@ public class MainViewController {
                 for (int i = 0; i < total_files; i++) {
                     File file = db.getFiles().get(i);
                     filePath = file.getAbsolutePath();
-                    String fileName =  file.getName();
+                    String fileName = file.getName();
                     filePaths.add(filePath);
 //                    inputListView.getItems().addAll(filePath);
                     inputListView.getItems().addAll(fileName);
@@ -140,6 +144,22 @@ public class MainViewController {
             Popup popup = new Popup();
             popup.getContent().add(popupListView);
             popup.show(Launcher.stage);
+            popupListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent keyEvent) {
+                    KeyCode key = keyEvent.getCode();
+                    if (key == KeyCode.ESCAPE)
+                        popup.hide();
+                }
+            });
+        });
+
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Stage stage = (Stage) Launcher.stage.getScene().getWindow();
+                stage.close();
+            }
         });
     }
 }

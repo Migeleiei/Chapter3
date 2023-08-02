@@ -41,7 +41,7 @@ public class WordMapMergeTask implements Callable<LinkedHashMap<String, ArrayLis
                         return Integer.compare(o2.get(0).freq, o1.get(0).freq);
                     }
                 }))
-                .collect(Collectors.toMap(e ->String.format("%-15s %3d",e.getKey(),e.getValue().get(0).freq), e -> e.getValue(),
+                .collect(Collectors.toMap(e -> String.format("%-15s %3d", e.getKey(), e.getValue().get(0).freq), e -> e.getValue(),
                         (v1, v2) -> v1, () -> new LinkedHashMap<>()));
         System.out.println(uniqueSets);
         return uniqueSets;

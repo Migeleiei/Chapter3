@@ -35,4 +35,5 @@ public class PDFdocument {
         this.filePath = filePath;
         File pdfFile = new File(filePath);
         this.document = PDDocument.load(pdfFile);
-    } }
+    }
+}

@@ -4,7 +4,7 @@ public class FileFreq {
 
     public String name;
     private String path;
-    public  Integer freq;
+    public Integer freq;
 
     public String getPath() {
         return path;
@@ -15,8 +15,9 @@ public class FileFreq {
         this.path = path;
         this.freq = freq;
     }
+
     @Override
     public String toString() {
-        return String.format("{%s:%d}",name,freq);
+        return String.format("{%s:%d}", name, freq);
     }
 }

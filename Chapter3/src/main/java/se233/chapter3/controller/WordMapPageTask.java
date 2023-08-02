@@ -1,4 +1,5 @@
 package se233.chapter3.controller;
+
 import org.pdfbox.util.PDFTextStripper;
 import se233.chapter3.model.FileFreq;
 import se233.chapter3.model.PDFdocument;
@@ -15,9 +16,11 @@ import static java.util.stream.Collectors.toMap;
 public class WordMapPageTask implements Callable<Map<String, FileFreq>> {
 
     private PDFdocument doc;
+
     public WordMapPageTask(PDFdocument doc) throws IOException {
         this.doc = doc;
     }
+
     @Override
     public Map<String, FileFreq> call() throws Exception {
         Map<String, FileFreq> wordCount;
