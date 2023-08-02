@@ -16,7 +16,8 @@ public class WordMapMergeTask implements Callable<LinkedHashMap<String, ArrayLis
 
     @Override
     public LinkedHashMap<String, ArrayList<FileFreq>> call() throws Exception {
-        LinkedHashMap<String, ArrayList<FileFreq>> uniqueSets = new LinkedHashMap<String, ArrayList<FileFreq>>();  ;
+        LinkedHashMap<String, ArrayList<FileFreq>> uniqueSets = new LinkedHashMap<String, ArrayList<FileFreq>>();
+        ;
         List<Map<String, FileFreq>> wordMapList = new ArrayList<>(Arrays.asList(
                 wordMap));
         uniqueSets = wordMapList.stream()
@@ -29,12 +30,20 @@ public class WordMapMergeTask implements Callable<LinkedHashMap<String, ArrayLis
                                     current_list.addAll(new_items);
                                     return current_list;
                                 })
+
                 ))
                 .entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(),
+                .sorted(Map.Entry.comparingByValue(new Comparator<ArrayList<FileFreq>>() {
+                    @Override
+                    public int compare(ArrayList<FileFreq> o1, ArrayList<FileFreq> o2) {
+                        return Integer.compare(o2.get(0).freq, o1.get(0).freq);
+                    }
+                }))
+                .collect(Collectors.toMap(e ->String.format("%-15s %3d",e.getKey(),e.getValue().get(0).freq), e -> e.getValue(),
                         (v1, v2) -> v1, () -> new LinkedHashMap<>()));
+        System.out.println(uniqueSets);
         return uniqueSets;
     }
 }

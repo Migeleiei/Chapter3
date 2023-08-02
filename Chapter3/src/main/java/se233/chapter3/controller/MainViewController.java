@@ -17,17 +17,16 @@ import se233.chapter3.model.PDFdocument;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class MainViewController {
-    LinkedHashMap<String, ArrayList<FileFreq>> uniqueSets ;
+    LinkedHashMap<String, ArrayList<FileFreq>> uniqueSets;
     @FXML
     private ListView<String> inputListView;
     @FXML
@@ -73,43 +72,44 @@ public class MainViewController {
                     VBox box = new VBox(pi);
                     box.setAlignment(Pos.CENTER);
                     Launcher.stage.getScene().setRoot(box);
-            ExecutorService executor = Executors.newFixedThreadPool(4);
-            final ExecutorCompletionService<Map<String, FileFreq>> completionService = new
-                    ExecutorCompletionService<>(executor);
-            List<String> inputListViewItems = inputListView.getItems();
-            int total_files = inputListViewItems.size();
-            Map<String, FileFreq>[] wordMap = new Map[total_files];
-            for (int i = 0; i < total_files; i++) {
-                try {
-                    String filePath = inputListViewItems.get(i);
-                    PDFdocument p = new PDFdocument(filePath);
-                    completionService.submit(new WordMapPageTask(p));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            for (int i = 0; i < total_files; i++) {
-                try {
-                    Future<Map<String, FileFreq>> future = completionService.take();
-                    wordMap[i] = future.get();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                WordMapMergeTask merger = new WordMapMergeTask(wordMap);
-                Future<LinkedHashMap<String, ArrayList<FileFreq>>> future = executor.submit(merger);
-                uniqueSets = future.get();
-                listView.getItems().addAll(uniqueSets.keySet());
-            }catch (Exception e){
-                e.printStackTrace();
-            }finally {
-                executor.shutdown();
-            }
+                    ExecutorService executor = Executors.newFixedThreadPool(4);
+                    final ExecutorCompletionService<Map<String, FileFreq>> completionService = new
+                            ExecutorCompletionService<>(executor);
+                    List<String> inputListViewItems = inputListView.getItems();
+                    int total_files = inputListViewItems.size();
+                    Map<String, FileFreq>[] wordMap = new Map[total_files];
+                    for (int i = 0; i < total_files; i++) {
+                        try {
+                            String filePath = inputListViewItems.get(i);
+                            PDFdocument p = new PDFdocument(filePath);
+                            completionService.submit(new WordMapPageTask(p));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    for (int i = 0; i < total_files; i++) {
+                        try {
+                            Future<Map<String, FileFreq>> future = completionService.take();
+                            wordMap[i] = future.get();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    try {
+                        WordMapMergeTask merger = new WordMapMergeTask(wordMap);
+                        Future<LinkedHashMap<String, ArrayList<FileFreq>>> future = executor.submit(merger);
+                        uniqueSets = future.get();
+
+                        listView.getItems().addAll(uniqueSets.keySet());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        executor.shutdown();
+                    }
                     return null;
                 }
             };
-            processTask.setOnSucceeded( e -> {
+            processTask.setOnSucceeded(e -> {
                 Launcher.stage.getScene().setRoot(bgRoot);
             });
             Thread thread = new Thread(processTask);
@@ -120,13 +120,14 @@ public class MainViewController {
             ArrayList<FileFreq> listOfLinks = uniqueSets.get(listView.getSelectionModel()
                     .getSelectedItem());
             ListView<FileFreq> popupListView = new ListView<>();
-            LinkedHashMap<FileFreq,String> lookupTable = new LinkedHashMap<>();
-            for (int i=0 ; i<listOfLinks.size() ; i++) {lookupTable.put(listOfLinks.get(i),listOfLinks.get(i).getPath());
+            LinkedHashMap<FileFreq, String> lookupTable = new LinkedHashMap<>();
+            for (int i = 0; i < listOfLinks.size(); i++) {
+                lookupTable.put(listOfLinks.get(i), listOfLinks.get(i).getPath());
                 popupListView.getItems().add(listOfLinks.get(i));
             }
             popupListView.setPrefHeight(popupListView.getItems().size() * 28);
             popupListView.setOnMouseClicked(innerEvent -> {
-                Launcher.hs.showDocument("file:///"+lookupTable.get(popupListView
+                Launcher.hs.showDocument("file:///" + lookupTable.get(popupListView
                         .getSelectionModel().getSelectedItem()));
                 popupListView.getScene().getWindow().hide();
             });
@@ -136,3 +137,4 @@ public class MainViewController {
         });
     }
 }
+
