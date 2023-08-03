@@ -86,6 +86,7 @@ public class MainViewController {
                             ExecutorCompletionService<>(executor);
                     List<String> inputListViewItems = inputListView.getItems();
                     int total_files = inputListViewItems.size();
+                    System.out.println("Total File "+total_files);
                     Map<String, FileFreq>[] wordMap = new Map[total_files];
                     for (int i = 0; i < total_files; i++) {
                         try {
