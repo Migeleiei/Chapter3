@@ -25,7 +25,9 @@ public class WordMapMergeTask implements Callable<LinkedHashMap<String, ArrayLis
                 .collect(Collectors.groupingBy(e -> e.getKey(),
                         Collector.of(
                                 () -> new ArrayList<FileFreq>(),
-                                (list, item) -> list.add(item.getValue()),
+                                (list, item) -> {
+                                    System.out.println(item.getKey() +" }}}}} "+ item.getValue());
+                                    list.add(item.getValue());},
                                 (current_list, new_items) -> {
                                     current_list.addAll(new_items);
                                     return current_list;
@@ -41,9 +43,9 @@ public class WordMapMergeTask implements Callable<LinkedHashMap<String, ArrayLis
                         return Integer.compare(o2.get(0).freq, o1.get(0).freq);
                     }
                 }))
-                .collect(Collectors.toMap(e -> String.format("%-15s %3d", e.getKey(), e.getValue().get(0).freq), e -> e.getValue(),
+                .collect(Collectors.toMap(e -> String.format("%-15s %s", e.getKey(), "("+ e.getValue().get(0).name +" " +e.getValue().get(0).freq+")"), e -> e.getValue(),
                         (v1, v2) -> v1, () -> new LinkedHashMap<>()));
-        System.out.println(uniqueSets);
+
         return uniqueSets;
     }
 }
